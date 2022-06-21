@@ -13,14 +13,28 @@ partial class Program
         {
             var civilizacion = GetCivilizaciones();
             Console.WriteLine("Lista de civilizaciones cargadas: ");
-            foreach (var civil in civilizacion) {
+            foreach (var civil in civilizacion.ListaCivilizaciones) {
                 Console.WriteLine("{0}- {1}",civil.Id,civil.Name);
             }
+            int opcion;
+            do {
+                Console.WriteLine("Seleccione una sivilización (0-32): ");
+                opcion = Convert.ToInt16(Console.ReadLine());
+            } while (opcion < 0 || opcion > 32);
+            foreach (var civil in  civilizacion.ListaCivilizaciones)
+            {
+                if(civil.Id == opcion) {
+                    Console.WriteLine("Nombre: {0}",civil.Name);
+                    Console.WriteLine("Pertenece a la expansión: {0}",civil.Expansion);
+                    Console.WriteLine("Tipo de armada: {0}",civil.ArmyType);
+                }
+            }
+            Console.WriteLine("");
 
         }
 
 
-        private static Civilizacion GetCivilizaciones()
+        private static Root GetCivilizaciones()
         {
             var url = @"https://age-of-empires-2-api.herokuapp.com/api/v1/civilizations";
             var request = (HttpWebRequest)WebRequest.Create(url);
@@ -28,7 +42,7 @@ partial class Program
             request.ContentType = "application/json";
             request.Accept = "application/json";
 
-            var civilizacion = new Civilizacion();
+            var civilizacion = new Root();
             try
             {
                 using (WebResponse response = request.GetResponse())
@@ -38,7 +52,7 @@ partial class Program
                         if (strReader != null){
                             using (StreamReader objReader = new StreamReader(strReader)) {
                                 string responseBody = objReader.ReadToEnd();
-                                civilizacion = JsonSerializer.Deserialize<Civilizacion>(responseBody);
+                                civilizacion = JsonSerializer.Deserialize<Root>(responseBody);
                             }
                         }
                     }
